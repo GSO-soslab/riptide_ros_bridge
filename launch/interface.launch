@@ -1,0 +1,11 @@
+<launch>
+
+    <node
+            pkg="riptide_ros_interface"
+            type="interface_node"
+            name="riptide_interface"
+            args="-m $(find riptide_ros_interface)/config/bridge.moos"
+            output="screen"
+    />
+
+</launch>
