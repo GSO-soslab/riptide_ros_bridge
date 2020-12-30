@@ -10,6 +10,8 @@
 
 namespace soslab {
 
+    class ROSNode;
+
     class MOOSNode : public CMOOSApp {
     public:
         ~MOOSNode() override = default;
@@ -23,6 +25,8 @@ namespace soslab {
         bool publishWayPoint(waypoint_t w);
 
         void SetPool(std::shared_ptr<pool_t> p) { m_pool = p; }
+
+        void SetRosNode(std::shared_ptr<ROSNode> n) { m_rosNode = n; }
 
     protected:
         
@@ -49,6 +53,8 @@ namespace soslab {
 
     private:
         std::shared_ptr<pool_t> m_pool;
+
+        std::shared_ptr<ROSNode> m_rosNode;
     };
 }
 

@@ -16,6 +16,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
   sensor_msgs
+  auv_msgs
   message_generation
 )
 
@@ -52,11 +53,10 @@ find_package(catkin REQUIRED COMPONENTS
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
-# add_message_files(
-#   FILES
-#   Message1.msg
-#   Message2.msg
-# )
+add_message_files(
+  FILES
+    Nav.msg
+)
 
 ## Generate services in the 'srv' folder
 add_service_files(
@@ -76,6 +76,7 @@ generate_messages(
   DEPENDENCIES
     std_msgs
     geometry_msgs
+    auv_msgs
 )
 
 ################################################
@@ -113,8 +114,9 @@ catkin_package(
   CATKIN_DEPENDS
     roscpp
     std_msgs
-    message_runtime
     sensor_msgs
+    auv_msgs
+    message_runtime
 #  DEPENDS system_lib
 )
 
@@ -125,7 +127,6 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-  include
   ${catkin_INCLUDE_DIRS}
 )
 
@@ -182,7 +183,6 @@ target_link_libraries(interface_node
 # Mark executable scripts (Python etc.) for installation
 # in contrast to setup.py, you can choose the destination
 # install(PROGRAMS
-#   scripts/counter.sh
 #   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 #  )
 
@@ -191,7 +191,7 @@ install(TARGETS interface
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-  )
+)
 
 ## Mark cpp header files for installation
 # install(DIRECTORY include/${PROJECT_NAME}/

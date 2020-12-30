@@ -4,10 +4,17 @@
 #include <thread>
 #include <functional>
 
+#include "ros_node.h"
+
 using namespace soslab;
 
 void MOOSNode::Init(const char *MissionFile)
 {
+    if(not m_rosNode)
+    {
+        throw std::runtime_error("ROS Node should be set up before running MOOS Node");
+    }
+
     th = std::thread(
         [this, MissionFile] {
             Run("MOOS_ROS_BRIDGE", MissionFile);
@@ -108,7 +115,9 @@ bool MOOSNode::OnStartUp()
 
 void MOOSNode::DoRegistrations()
 {
-    std::vector<std::string> list ={
+    // todo: read them from config file
+    std::vector<std::string> list =
+    {
     /*! @note: NAV  */
         "NAV_X",
         "NAV_Y",
@@ -142,7 +151,6 @@ void MOOSNode::Translate(CMOOSMsg &msg)
 {
     const auto& key = msg.GetKey();
     const std::lock_guard<std::mutex> lock(m_pool->lock);
-
     // NAV
     if(        key == "NAV_X")
     {
@@ -206,11 +214,13 @@ void MOOSNode::Translate(CMOOSMsg &msg)
 
     if(TEST_NAV_FILL(m_pool->nav_fill))
     {
-
+        FLUSH_FILL(m_pool->nav_fill);
+        m_rosNode->PublishNav();
     }
 
     if(TEST_WAYPOINT_FILL(m_pool->waypoint_fill))
     {
+        FLUSH_FILL(m_pool->waypoint_fill);
 
     }
 }

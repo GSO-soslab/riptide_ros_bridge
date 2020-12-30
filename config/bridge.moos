@@ -8,7 +8,7 @@ ServerHost = localhost
 ServerPort = 9000
 Simulator  = true
 
-Community    = moosros
+Community    = alpha
 MOOSTimeWarp = 1
 
 Processconfig = ANTLER

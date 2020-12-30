@@ -49,6 +49,8 @@ namespace soslab {
     o.heading &     \
     o.speed
 
+#define FLUSH_FILL(o) *((uint16_t*)&o) = 0
+
     typedef struct waypoint_t {
         /*! @brief: moos "WPT_STAT" */
         std::string stat;
