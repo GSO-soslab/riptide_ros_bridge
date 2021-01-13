@@ -1,8 +1,6 @@
 
 #include "ros_node.h"
 #include "moos_node.h"
-#include "auv_msgs/NavigationStatus.h"
-#include "riptide_ros_interface/Nav.h"
 
 namespace soslab {
 
@@ -13,6 +11,12 @@ namespace soslab {
         m_nav_msg.header.seq = 0;
 
         m_nav_publisher = m_pnh.advertise<riptide_ros_interface::Nav>("navigation", 1000);
+
+        m_wpt_service = m_pnh.advertiseService("send_waypoint", &ROSNode::wayPointService, this);
+
+        m_dep_service = m_pnh.advertiseService("send_depth", &ROSNode::depthService, this);
+
+
     }
 
     void ROSNode::Initialize()
@@ -23,11 +27,30 @@ namespace soslab {
         }
     }
 
-    void ROSNode::wayPointCallback(const geometry_msgs::Point &msg)
-    {
+    bool ROSNode::wayPointService(riptide_ros_interface::WayPointRequest& req,
+                                  riptide_ros_interface::WayPointResponse& res) {
         const std::lock_guard<std::mutex> lock(m_pool->lock);
 
+        if(req.list.empty()) {
+            return false;
+        } else {
+            m_pool->waypoint.update.clear();
+            m_pool->waypoint.update += "points = pts={";
+            for(const auto& point : req.list) {
+                m_pool->waypoint.update += std::to_string(point.x) + "," + std::to_string(point.y) + ":";
+            }
+            m_pool->waypoint.update += "}";
+        }
+        return m_moosNode->publishWayPointUpdate();
+    }
 
+    bool ROSNode::depthService(riptide_ros_interface::Depth::Request &req,
+                               riptide_ros_interface::Depth::Response &res) {
+        const std::lock_guard<std::mutex> lock(m_pool->lock);
+
+        m_pool->depth.update = "depth = " + std::to_string(req.depth);
+
+        return m_moosNode->publishDepthUpdate();
     }
 
     void ROSNode::PublishNav() {

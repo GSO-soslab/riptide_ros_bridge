@@ -134,7 +134,7 @@ void MOOSNode::DoRegistrations()
         "WPT_EFF_DIST_ALL",
         "WPT_EFF_DIST_LEG",
         "WPT_EFF_SUMM_ALL",
-        "WPA_UPDATE",
+        "WPT_UPDATE",
     };
 
     for(const auto& i : list)
@@ -155,79 +155,82 @@ void MOOSNode::Translate(CMOOSMsg &msg)
     if(        key == "NAV_X")
     {
         m_pool->nav.x = msg.GetDouble();
-        m_pool->nav_fill.x |= 1;
+        m_pool->nav._fill.x |= 1;
     } else if (key == "NAV_Y")
     {
         m_pool->nav.y = msg.GetDouble();
-        m_pool->nav_fill.y |= 1;
+        m_pool->nav._fill.y |= 1;
     } else if (key == "NAV_Z")
     {
         m_pool->nav.z = msg.GetDouble();
-        m_pool->nav_fill.z |= 1;
+        m_pool->nav._fill.z |= 1;
     } else if (key == "NAV_YAW")
     {
         m_pool->nav.yaw = msg.GetDouble();
-        m_pool->nav_fill.yaw |= 1;
+        m_pool->nav._fill.yaw |= 1;
     } else if (key == "NAV_DEPTH")
     {
         m_pool->nav.depth = msg.GetDouble();
-        m_pool->nav_fill.depth |= 1;
+        m_pool->nav._fill.depth |= 1;
     } else if (key == "NAV_HEADING")
     {
         m_pool->nav.heading = msg.GetDouble();
-        m_pool->nav_fill.heading |= 1;
+        m_pool->nav._fill.heading |= 1;
     } else if (key == "NAV_LAT")
     {
         m_pool->nav.latitude = msg.GetDouble();
-        m_pool->nav_fill.latitude |= 1;
+        m_pool->nav._fill.latitude |= 1;
     } else if (key == "NAV_LONG")
     {
         m_pool->nav.longitude = msg.GetDouble();
-        m_pool->nav_fill.longitude |= 1;
+        m_pool->nav._fill.longitude |= 1;
     } else if (key == "NAV_SPEED")
     {
         m_pool->nav.speed = msg.GetDouble();
-        m_pool->nav_fill.speed |= 1;
+        m_pool->nav._fill.speed |= 1;
     }
     
     // BHV WAYPOINT
     if (        key == "WPT_STAT" )
     {
         m_pool->waypoint.stat = msg.GetAsString();
-        m_pool->waypoint_fill.stat |= 1;
+        m_pool->waypoint._fill.stat |= 1;
     } else if ( key == "WPT_ODO" )
     {
         m_pool->waypoint.odo = msg.GetDouble();
-        m_pool->waypoint_fill.odo |= 1;
+        m_pool->waypoint._fill.odo |= 1;
     } else if ( key == "WPT_UPDATE" )
     {
         m_pool->waypoint.update = msg.GetAsString();
-        m_pool->waypoint_fill.update |= 1;
+        m_pool->waypoint._fill.update |= 1;
     } else if ( key == "WPT_INDEX" )
     {
         m_pool->waypoint.index = (int)msg.GetDouble();
-        m_pool->waypoint_fill.index |= 1;
+        m_pool->waypoint._fill.index |= 1;
     }
     
     // BHV GO TO DEPTH
 
 
-    if(TEST_NAV_FILL(m_pool->nav_fill))
+    if(TEST_NAV_FILL(m_pool->nav))
     {
-        FLUSH_FILL(m_pool->nav_fill);
+        FLUSH_FILL(m_pool->nav);
         m_rosNode->PublishNav();
     }
 
-    if(TEST_WAYPOINT_FILL(m_pool->waypoint_fill))
+    if(TEST_WAYPOINT_FILL(m_pool->waypoint))
     {
-        FLUSH_FILL(m_pool->waypoint_fill);
+        FLUSH_FILL(m_pool->waypoint);
 
     }
 }
 
-bool MOOSNode::publishWayPoint(waypoint_t w)
+bool MOOSNode::publishWayPointUpdate()
 {
+    return toMOOS("WPT_UPDATE", m_pool->waypoint.update);
+}
 
-    return toMOOS("WPT_UPDATE", w.update);
-
+bool MOOSNode::publishDepthUpdate()
+{
+    return toMOOS("DEP_UPDATE", m_pool->depth.update);
 }

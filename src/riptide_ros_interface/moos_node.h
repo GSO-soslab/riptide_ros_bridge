@@ -22,7 +22,9 @@ namespace soslab {
 
         void Init(const char * MissionFile);
 
-        bool publishWayPoint(waypoint_t w);
+        bool publishWayPointUpdate();
+
+        bool publishDepthUpdate();
 
         void SetPool(std::shared_ptr<pool_t> p) { m_pool = p; }
 

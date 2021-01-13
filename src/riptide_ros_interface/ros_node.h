@@ -7,7 +7,13 @@
 
 #include "pool.h"
 #include "geometry_msgs/Point.h"
+#include "sensor_msgs/Imu.h"
+// MSG
 #include "riptide_ros_interface/Nav.h"
+
+// SRV
+#include "riptide_ros_interface/WayPoint.h"
+#include "riptide_ros_interface/Depth.h"
 
 namespace soslab {
 
@@ -17,6 +23,7 @@ namespace soslab {
     class ROSNode {
     private:
         riptide_ros_interface::Nav m_nav_msg;
+        sensor_msgs::Imu m_imu_msg;
 
     protected:
 
@@ -25,7 +32,18 @@ namespace soslab {
 
         ros::Publisher m_nav_publisher;
 
-        void wayPointCallback(const geometry_msgs::Point& msg);
+        /** @brief: Receive and transmit way point to moos waypoint behavior */
+        ros::ServiceServer m_wpt_service;
+
+        /** @brief: Receive and transmit depth to moos constant depth behavior */
+        ros::ServiceServer m_dep_service;
+
+        bool wayPointService(riptide_ros_interface::WayPoint::Request& req,
+                             riptide_ros_interface::WayPoint::Response& res);
+
+        bool depthService(riptide_ros_interface::Depth::Request& req,
+                          riptide_ros_interface::Depth::Response& res);
+
         std::shared_ptr<MOOSNode> m_moosNode;
         std::shared_ptr<pool_t> m_pool;
     public:
