@@ -5,6 +5,7 @@
 #include <functional>
 
 #include "ros_node.h"
+#include "utils.hpp"
 
 using namespace soslab;
 
@@ -116,7 +117,7 @@ bool MOOSNode::OnStartUp()
 void MOOSNode::DoRegistrations()
 {
     // todo: read them from config file
-    std::vector<std::string> list =
+    auto list =
     {
     /*! @note: NAV  */
         "NAV_X",
@@ -135,16 +136,23 @@ void MOOSNode::DoRegistrations()
         "WPT_EFF_DIST_LEG",
         "WPT_EFF_SUMM_ALL",
         "WPT_UPDATE",
+    /*! @note: IVPHELM */
+        "IVPHELM_STATEVARS",
+        "IVPHELM_STATE",
+        "IVPHELM_UPDATEVARS",
+        "IVPHELM_ALLSTOP",
+        "MOOS_MANUAL_OVERIDE"
+    /*! @note: MOOS general */
     };
 
     for(const auto& i : list)
     {
         m_Comms.Register(i, 0);
         char buf[512];
-        sprintf(buf, "Subscribing to %s\n", i.c_str());
+        sprintf(buf, "Subscribing to %s\n", i);
         MOOSTrace(buf);
     }
-   
+
 }
 
 void MOOSNode::Translate(CMOOSMsg &msg)
@@ -191,7 +199,7 @@ void MOOSNode::Translate(CMOOSMsg &msg)
     }
     
     // BHV WAYPOINT
-    if (        key == "WPT_STAT" )
+    else if (        key == "WPT_STAT" )
     {
         m_pool->waypoint.stat = msg.GetAsString();
         m_pool->waypoint._fill.stat |= 1;
@@ -208,9 +216,43 @@ void MOOSNode::Translate(CMOOSMsg &msg)
         m_pool->waypoint.index = (int)msg.GetDouble();
         m_pool->waypoint._fill.index |= 1;
     }
-    
-    // BHV GO TO DEPTH
 
+    // IVPHELM
+    else if ( key == "IVPHELM_STATE") {
+        m_pool->helm_status.state = msg.GetAsString();
+    } else if( key == "IVPHELM_STATEVARS") {
+        m_pool->helm_status.condition_vars = parseCommaList(msg.GetAsString());
+        for(const auto  i : m_pool->helm_status.condition_vars) {
+            auto s = m_Comms.GetRegistered();
+            auto r = s.find(i);
+            if(r == s.end()) {
+                m_Comms.Register(i, 0);
+                char buf[512];
+                sprintf(buf, "Subscribing to %s\n", i.c_str());
+                MOOSTrace(buf);
+            }
+        }
+    } else if ( key == "IVPHELM_UPDATEVARS") {
+        m_pool->helm_status.update_vars = parseCommonMoosMsg(msg.GetAsString());
+    } else if ( key == "IVPHELM_ALLSTOP" ) {
+        m_pool->helm_status.allstop_msg = msg.GetAsString();
+    }
+
+    else if ( key == "MOOS_MANUAL_OVERIDE") {
+        m_pool->helm_status.manual_overide = msg.GetAsString() == "true";
+    }
+
+
+    else {
+        auto state_key_find = std::find(
+                m_pool->helm_status.condition_vars.begin(),
+                m_pool->helm_status.condition_vars.end(),
+                key
+                );
+        if(state_key_find != m_pool->helm_status.condition_vars.end()) {
+            m_pool->helm_status.conditions[key] = msg.GetAsString() == "true";
+        }
+    }
 
     if(TEST_NAV_FILL(m_pool->nav))
     {
@@ -223,6 +265,7 @@ void MOOSNode::Translate(CMOOSMsg &msg)
         FLUSH_FILL(m_pool->waypoint);
 
     }
+
 }
 
 bool MOOSNode::publishWayPointUpdate()
@@ -233,4 +276,13 @@ bool MOOSNode::publishWayPointUpdate()
 bool MOOSNode::publishDepthUpdate()
 {
     return toMOOS("DEP_UPDATE", m_pool->depth.update);
+}
+
+bool MOOSNode::publishIvpHelmUpdate(const std::string& name, bool state)
+{
+    return toMOOS(name, state ? "true" : "false");
+}
+
+bool MOOSNode::publishManualOveride(bool state) {
+    return toMOOS("MOOS_MANUAL_OVERIDE", state ? "true" : "false");
 }

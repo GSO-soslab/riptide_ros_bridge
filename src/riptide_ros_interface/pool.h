@@ -170,7 +170,23 @@ namespace soslab {
     w._fill.depth & \
     w._fill.update
 
+
+    typedef struct ivphelm_status_t {
+        std::string state;
+        std::map<std::string, bool> conditions;
+        std::vector<std::string> condition_vars;
+        std::map<std::string, std::string> update_vars;
+        std::string allstop_msg;
+        std::string update;
+        bool manual_overide;
+        struct fill_c {
+
+        };
+        fill_c fill;
+    } ivphelm_status_t;
+
 #define FLUSH_FILL(o) *((uint16_t*)&o._fill) = 0
+
 
     typedef struct pool_t {
         nav_t nav;
@@ -184,6 +200,8 @@ namespace soslab {
         ps_t ps;
 
         imu_t imu;
+
+        ivphelm_status_t helm_status;
 
         std::mutex lock;
     } pool_t;

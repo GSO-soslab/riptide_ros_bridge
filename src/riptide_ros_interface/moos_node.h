@@ -26,6 +26,10 @@ namespace soslab {
 
         bool publishDepthUpdate();
 
+        bool publishIvpHelmUpdate(const std::string& name, bool state);
+
+        bool publishManualOveride(bool state);
+
         void SetPool(std::shared_ptr<pool_t> p) { m_pool = p; }
 
         void SetRosNode(std::shared_ptr<ROSNode> n) { m_rosNode = n; }
