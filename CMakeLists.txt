@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.10)
 project(riptide_ros_interface VERSION 0.0.1 LANGUAGES CXX)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
@@ -192,7 +192,7 @@ target_link_libraries(interface_node
 #  )
 
 # Mark executables and/or libraries for installation
-install(TARGETS interface 
+install(TARGETS interface
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
