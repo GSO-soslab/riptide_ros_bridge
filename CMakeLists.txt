@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.0.2)
 project(riptide_ros_interface VERSION 0.0.1 LANGUAGES CXX)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
