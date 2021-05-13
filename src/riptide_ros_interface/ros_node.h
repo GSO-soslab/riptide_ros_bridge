@@ -10,9 +10,11 @@
 #include "pool.h"
 #include "geometry_msgs/Point.h"
 #include "sensor_msgs/Imu.h"
+
 // MSG
 #include "riptide_ros_interface/Nav.h"
 #include "riptide_ros_interface/IvpHelmState.h"
+#include "riptide_ros_interface/Gps.h"
 
 // SRV
 #include "riptide_ros_interface/SetWayPoint.h"
@@ -22,12 +24,12 @@
 
 namespace soslab {
 
-
     class MOOSNode;
 
     class ROSNode {
     private:
         riptide_ros_interface::Nav m_nav_msg;
+        riptide_ros_interface::Gps m_gps_msg;
         sensor_msgs::Imu m_imu_msg;
 
         riptide_ros_interface::IvpHelmState m_ivp_helm_state_msg;
@@ -40,6 +42,8 @@ namespace soslab {
         ros::Publisher m_nav_publisher;
 
         ros::Publisher m_imu_publisher;
+
+        ros::Publisher m_gps_publisher;
 
         ros::Publisher m_ivp_helm_state_publisher;
 
@@ -87,6 +91,7 @@ namespace soslab {
 
         void PublishImu();
 
+        void PublishGps();
 
     };
     

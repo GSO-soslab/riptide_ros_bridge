@@ -16,7 +16,7 @@ namespace soslab {
         m_nav_publisher = m_pnh.advertise<riptide_ros_interface::Nav>("navigation", 1000);
         m_ivp_helm_state_publisher = m_pnh.advertise<riptide_ros_interface::IvpHelmState>("helm_state", 1000);
         m_imu_publisher = m_pnh.advertise<sensor_msgs::Imu>("imu", 1000);
-
+        m_gps_publisher = m_pnh.advertise<riptide_ros_interface::Gps>("gps",1000);
 
         // Services
         m_wpt_service = m_pnh.advertiseService("send_waypoint", &ROSNode::wayPointService, this);
@@ -129,6 +129,24 @@ namespace soslab {
         m_imu_msg.angular_velocity.z = m_pool->imu.z_gyro;
 
         m_imu_publisher.publish(m_imu_msg);
+    }
+
+    void ROSNode::PublishGps() {
+        m_gps_msg.header.seq += 1;
+        m_gps_msg.header.stamp = ros::Time::now();
+
+
+        m_gps_msg.latitude = m_pool->gps.latitude;
+        m_gps_msg.longitude = m_pool->gps.longitude;
+        m_gps_msg.quality = m_pool->gps.quality;
+        m_gps_msg.sat = m_pool->gps.sat;
+        m_gps_msg.hdop = m_pool->gps.hdop;
+        m_gps_msg.fix = m_pool->gps.fix;
+        m_gps_msg.heading = m_pool->gps.heading;
+        m_gps_msg.origin_latitude = m_pool->gps.origin_latitude;
+        m_gps_msg.origin_longitude = m_pool->gps.origin_longitude;
+        m_gps_msg.x = m_pool->gps.x;
+        m_gps_msg.y = m_pool->gps.y;
     }
 
     void ROSNode::PublishIvpHelmState() {

@@ -60,6 +60,7 @@ add_message_files(
     IvpHelmState.msg
     StringMap.msg
     Nav.msg
+    Gps.msg
 )
 
 ## Generate services in the 'srv' folder

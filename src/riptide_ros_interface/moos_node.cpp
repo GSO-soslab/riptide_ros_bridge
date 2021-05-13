@@ -141,7 +141,32 @@ void MOOSNode::DoRegistrations()
         "IVPHELM_STATE",
         "IVPHELM_UPDATEVARS",
         "IVPHELM_ALLSTOP",
-        "MOOS_MANUAL_OVERIDE"
+        "MOOS_MANUAL_OVERIDE",
+    /*! @note: IMU */
+        "IMU_ROLL",
+        "IMU_PITCH",
+        "IMU_YAW",
+        "IMU_HEADING",
+        "IMU_X_ACCEL",
+        "IMU_Y_ACCEL",
+        "IMU_Z_ACCEL",
+        "IMU_X_GYRO",
+        "IMU_Y_GYRO",
+        "IMU_Z_GYRO",
+    /*! @note: GPS */
+        "GPS_ANTENNA_OKAY",
+        "GPS_FIX",
+        "GPS_HDOP",
+        "GPS_LAST_COMMS",
+        "GPS_QUALITY",
+        "GPS_X",
+        "GPS_Y",
+        "GPS_LONGIGUTUDE",
+        "GPS_LATITUDE",
+        "GPS_SPEED",
+        "GPS_SAT",
+        "ORIGIN_LATITUDE",
+        "ORIGIN_LONGITUDE"
     /*! @note: MOOS general */
     };
 
@@ -155,120 +180,143 @@ void MOOSNode::DoRegistrations()
 
 }
 
-void MOOSNode::Translate(CMOOSMsg &msg)
-{
-    const auto& key = msg.GetKey();
+void MOOSNode::Translate(CMOOSMsg &msg) {
+    const auto &key = msg.GetKey();
     const std::lock_guard<std::mutex> lock(m_pool->lock);
     // NAV
-    if(        key == "NAV_X")
-    {
+    if (key == "NAV_X") {
         m_pool->nav.x = msg.GetDouble();
         m_pool->nav._fill.x |= 1;
-    } else if (key == "NAV_Y")
-    {
+    } else if (key == "NAV_Y") {
         m_pool->nav.y = msg.GetDouble();
         m_pool->nav._fill.y |= 1;
-    } else if (key == "NAV_Z")
-    {
+    } else if (key == "NAV_Z") {
         m_pool->nav.z = msg.GetDouble();
         m_pool->nav._fill.z |= 1;
-    } else if (key == "NAV_YAW")
-    {
+    } else if (key == "NAV_YAW") {
         m_pool->nav.yaw = msg.GetDouble();
         m_pool->nav._fill.yaw |= 1;
-    } else if (key == "NAV_DEPTH")
-    {
+    } else if (key == "NAV_DEPTH") {
         m_pool->nav.depth = msg.GetDouble();
         m_pool->nav._fill.depth |= 1;
-    } else if (key == "NAV_HEADING")
-    {
+    } else if (key == "NAV_HEADING") {
         m_pool->nav.heading = msg.GetDouble();
         m_pool->nav._fill.heading |= 1;
-    } else if (key == "NAV_LAT")
-    {
+    } else if (key == "NAV_LAT") {
         m_pool->nav.latitude = msg.GetDouble();
         m_pool->nav._fill.latitude |= 1;
-    } else if (key == "NAV_LONG")
-    {
+    } else if (key == "NAV_LONG") {
         m_pool->nav.longitude = msg.GetDouble();
         m_pool->nav._fill.longitude |= 1;
-    } else if (key == "NAV_SPEED")
-    {
+    } else if (key == "NAV_SPEED") {
         m_pool->nav.speed = msg.GetDouble();
         m_pool->nav._fill.speed |= 1;
     }
-    
-    // BHV WAYPOINT
-    else if (        key == "WPT_STAT" )
-    {
+
+        // BHV WAYPOINT
+    else if (key == "WPT_STAT") {
         m_pool->waypoint.stat = msg.GetAsString();
         m_pool->waypoint._fill.stat |= 1;
-    } else if ( key == "WPT_ODO" )
-    {
+    } else if (key == "WPT_ODO") {
         m_pool->waypoint.odo = msg.GetDouble();
         m_pool->waypoint._fill.odo |= 1;
-    } else if ( key == "WPT_UPDATE" )
-    {
+    } else if (key == "WPT_UPDATE") {
         m_pool->waypoint.update = msg.GetAsString();
         m_pool->waypoint._fill.update |= 1;
-    } else if ( key == "WPT_INDEX" )
-    {
-        m_pool->waypoint.index = (int)msg.GetDouble();
+    } else if (key == "WPT_INDEX") {
+        m_pool->waypoint.index = (int) msg.GetDouble();
         m_pool->waypoint._fill.index |= 1;
     }
 
-    // IVPHELM
-    else if ( key == "IVPHELM_STATE") {
+        // IVPHELM
+    else if (key == "IVPHELM_STATE") {
         m_pool->helm_status.state = msg.GetAsString();
-    } else if( key == "IVPHELM_STATEVARS") {
+    } else if (key == "IVPHELM_STATEVARS") {
         m_pool->helm_status.condition_vars = parseCommaList(msg.GetAsString());
-        for(const auto  i : m_pool->helm_status.condition_vars) {
+        for (const auto i : m_pool->helm_status.condition_vars) {
             auto s = m_Comms.GetRegistered();
             auto r = s.find(i);
-            if(r == s.end()) {
+            if (r == s.end()) {
                 m_Comms.Register(i, 0);
                 char buf[512];
                 sprintf(buf, "Subscribing to %s\n", i.c_str());
                 MOOSTrace(buf);
             }
         }
-    } else if ( key == "IVPHELM_UPDATEVARS") {
+    } else if (key == "IVPHELM_UPDATEVARS") {
         m_pool->helm_status.update_vars = parseCommonMoosMsg(msg.GetAsString());
-    } else if ( key == "IVPHELM_ALLSTOP" ) {
+    } else if (key == "IVPHELM_ALLSTOP") {
         m_pool->helm_status.allstop_msg = msg.GetAsString();
-    } else if ( key == "MOOS_MANUAL_OVERIDE") {
+    } else if (key == "MOOS_MANUAL_OVERIDE") {
         m_pool->helm_status.manual_overide = msg.GetAsString() == "true";
     }
-    // IMU
-    else if ( key == "IMU_ROLL") {
+
+        // IMU
+    else if (key == "IMU_ROLL") {
         m_pool->imu.roll = msg.GetDouble();
-    } else if ( key == "IMU_PITCH") {
+    } else if (key == "IMU_PITCH") {
         m_pool->imu.pitch = msg.GetDouble();
-    } else if ( key == "IMU_YAW") {
+    } else if (key == "IMU_YAW") {
         m_pool->imu.yaw = msg.GetDouble();
-    } else if ( key == "IMU_HEADING") {
+    } else if (key == "IMU_HEADING") {
         m_pool->imu.heading = msg.GetDouble();
-    } else if ( key == "IMU_X_ACCEL") {
+    } else if (key == "IMU_X_ACCEL") {
         m_pool->imu.x_accel = msg.GetDouble();
         m_pool->imu._fill.x_accel |= 1;
-    } else if ( key == "IMU_Y_ACCEL") {
+    } else if (key == "IMU_Y_ACCEL") {
         m_pool->imu.y_accel = msg.GetDouble();
         m_pool->imu._fill.y_accel |= 1;
-    } else if ( key == "IMU_Z_ACCEL") {
+    } else if (key == "IMU_Z_ACCEL") {
         m_pool->imu.z_accel = msg.GetDouble();
         m_pool->imu._fill.z_accel |= 1;
-    } else if ( key == "IMU_X_GYRO") {
+    } else if (key == "IMU_X_GYRO") {
         m_pool->imu.x_gyro = msg.GetDouble();
         m_pool->imu._fill.x_gyro |= 1;
-    } else if ( key == "IMU_Y_GYRO") {
+    } else if (key == "IMU_Y_GYRO") {
         m_pool->imu.y_gyro = msg.GetDouble();
         m_pool->imu._fill.y_gyro |= 1;
-    } else if ( key == "IMU_Z_GYRO") {
+    } else if (key == "IMU_Z_GYRO") {
         m_pool->imu.z_gyro = msg.GetDouble();
         m_pool->imu._fill.z_gyro |= 1;
     }
 
-
+    // GPS
+    else if (key == "GPS_ANTENNA_OKAY") {
+        m_pool->gps.antenna_okay = (int)msg.GetDouble();
+        m_pool->gps._fill.antenna_okay |= 1;
+    } else if (key == "GPS_PARSE_ERRORS") {
+        m_pool->gps.parse_errors = (int)msg.GetDouble();
+        m_pool->gps._fill.parse_errors |= 1;
+    } else if (key == "GPS_FIX") {
+        m_pool->gps.fix = (int)msg.GetDouble();
+        m_pool->gps._fill.fix |= 1;
+    } else if (key == "GPS_HDOP") {
+        m_pool->gps.hdop = msg.GetDouble();
+    } else if (key == "GPS_LAST_COMMS") {
+        m_pool->gps.last_comms = msg.GetDouble();
+    } else if (key == "GPS_QUALITY") {
+        m_pool->gps.quality = (int)msg.GetDouble();
+    } else if (key == "GPS_X") {
+        m_pool->gps.x = msg.GetDouble();
+    } else if (key == "GPS_Y") {
+        m_pool->gps.y = msg.GetDouble();
+    } else if (key == "GPS_LONGITUDE") {
+        m_pool->gps.longitude = msg.GetDouble();
+    } else if (key == "GPS_LATITUDE") {
+        m_pool->gps.latitude = msg.GetDouble();
+    } else if (key == "GPS_SPEED") {
+        m_pool->gps.speed = msg.GetDouble();
+    } else if (key == "GPS_SAT") {
+        m_pool->gps.sat = (int)msg.GetDouble();
+        m_pool->gps._fill.sat |= 1;
+    } else if (key == "ORIGIN_LONGITUDE") {
+        m_pool->gps.origin_latitude = msg.GetDouble();
+    } else if (key == "ORIGIN_LATITUDE") {
+        m_pool->gps.origin_latitude = msg.GetDouble();
+    } else if (key == "GPS_QUALITY") {
+        m_pool->gps.quality = (int)msg.GetDouble();
+        m_pool->gps._fill.quality |= 1;
+    }
 
 
     else {
@@ -282,14 +330,12 @@ void MOOSNode::Translate(CMOOSMsg &msg)
         }
     }
 
-    if(TEST_NAV_FILL(m_pool->nav))
-    {
+    if(TEST_NAV_FILL(m_pool->nav)) {
         FLUSH_FILL(m_pool->nav);
         m_rosNode->PublishNav();
     }
 
-    if(TEST_WAYPOINT_FILL(m_pool->waypoint))
-    {
+    if(TEST_WAYPOINT_FILL(m_pool->waypoint)) {
         FLUSH_FILL(m_pool->waypoint);
 
     }
@@ -297,6 +343,11 @@ void MOOSNode::Translate(CMOOSMsg &msg)
     if(TEST_IMU_FILL(m_pool->imu)) {
         FLUSH_FILL(m_pool->imu);
         m_rosNode->PublishImu();
+    }
+
+    if(TEST_GPS_FILL(m_pool->gps)) {
+        FLUSH_FILL(m_pool->gps);
+        m_rosNode->PublishGps();
     }
 
 }

@@ -147,13 +147,21 @@ namespace soslab {
         int last_comms;
         int parse_errors;
         struct fill_c {
-
+            unsigned fix : 1;
+            unsigned sat : 1;
+            unsigned parse_errors : 1;
+            unsigned antenna_okay : 1;
+            unsigned quality : 1 ;
         };
         fill_c _fill;
     } gps_t;
 
 #define TEST_GPS_FILL(w) \
-    w._fill
+    w._fill.fix &        \
+    w._fill.sat &        \
+    w._fill.parse_errors & \
+    w._fill.antenna_okay & \
+    w._fill.quality
 
     //! @brief: Pressure message
     typedef struct ps_t {
