@@ -103,14 +103,30 @@ namespace soslab {
         int calib_accel;
         int calib_mag;
         struct fill_c {
-
+            unsigned x_accel : 1;
+            unsigned y_accel : 1;
+            unsigned z_accel : 1;
+            unsigned x_gyro : 1;
+            unsigned y_gyro : 1;
+            unsigned z_gyro : 1;
+            unsigned x_vel : 1;
+            unsigned y_vel : 1;
+            unsigned z_vel : 1;
         };
         fill_c _fill;
     } imu_t;
 
 
 #define TEST_IMU_FILL(w) \
-    w._fill
+    w._fill.x_accel & \
+    w._fill.y_accel & \
+    w._fill.z_accel & \
+    w._fill.x_gyro & \
+    w._fill.y_gyro & \
+    w._fill.z_gyro & \
+    w._fill.x_vel & \
+    w._fill.y_vel & \
+    w._fill.z_vel
 
     typedef struct gps_t {
         // 1hz

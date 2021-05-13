@@ -18,6 +18,7 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
   auv_msgs
   message_generation
+  tf2
 )
 
 ## System dependencies are found with CMake's conventions
@@ -122,6 +123,7 @@ catkin_package(
     sensor_msgs
     auv_msgs
     message_runtime
+    tf2
 #  DEPENDS system_lib
 )
 

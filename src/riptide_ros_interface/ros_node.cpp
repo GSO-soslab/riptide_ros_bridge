@@ -1,6 +1,7 @@
 
 #include "ros_node.h"
 #include "moos_node.h"
+#include "tf2/LinearMath/Quaternion.h"
 
 namespace soslab {
 
@@ -11,16 +12,16 @@ namespace soslab {
         m_nav_msg.header.seq = 0;
         m_ivp_helm_state_msg.header.seq = 0;
 
+        // Publishers
         m_nav_publisher = m_pnh.advertise<riptide_ros_interface::Nav>("navigation", 1000);
-
         m_ivp_helm_state_publisher = m_pnh.advertise<riptide_ros_interface::IvpHelmState>("helm_state", 1000);
+        m_imu_publisher = m_pnh.advertise<sensor_msgs::Imu>("imu", 1000);
 
+
+        // Services
         m_wpt_service = m_pnh.advertiseService("send_waypoint", &ROSNode::wayPointService, this);
-
         m_dep_service = m_pnh.advertiseService("send_depth", &ROSNode::depthService, this);
-
         m_helm_state_service = m_pnh.advertiseService("set_helm_state", &ROSNode::ivpHelmConditionService, this);
-
         m_manual_overide_service = m_pnh.advertiseService("set_manual_overide", &ROSNode::manualOverideService, this);
 
     }
@@ -106,6 +107,28 @@ namespace soslab {
         m_nav_msg.speed = m_pool->nav.speed;
 
         m_nav_publisher.publish(m_nav_msg);
+    }
+
+    void ROSNode::PublishImu() {
+        m_imu_msg.header.seq += 1;
+
+        tf2::Quaternion q;
+        q.setRPY(m_pool->imu.roll, m_pool->imu.pitch, m_pool->imu.yaw);
+        m_imu_msg.orientation.w = q.getW();
+        m_imu_msg.orientation.x = q.getX();
+        m_imu_msg.orientation.y = q.getY();
+        m_imu_msg.orientation.z = q.getZ();
+
+        // TODO: This comes as velocity, maybe we should turn this into acceleration
+        m_imu_msg.linear_acceleration.x = m_pool->imu.x_vel;
+        m_imu_msg.linear_acceleration.y = m_pool->imu.z_vel;
+        m_imu_msg.linear_acceleration.z = m_pool->imu.y_vel;
+
+        m_imu_msg.angular_velocity.x = m_pool->imu.x_gyro;
+        m_imu_msg.angular_velocity.y = m_pool->imu.y_gyro;
+        m_imu_msg.angular_velocity.z = m_pool->imu.z_gyro;
+
+        m_imu_publisher.publish(m_imu_msg);
     }
 
     void ROSNode::PublishIvpHelmState() {

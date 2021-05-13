@@ -39,6 +39,8 @@ namespace soslab {
 
         ros::Publisher m_nav_publisher;
 
+        ros::Publisher m_imu_publisher;
+
         ros::Publisher m_ivp_helm_state_publisher;
 
         /** @brief: Receive and transmit way point to moos waypoint behavior */
@@ -82,6 +84,10 @@ namespace soslab {
         void PublishNav();
 
         void PublishIvpHelmState();
+
+        void PublishImu();
+
+
     };
     
 }

@@ -236,11 +236,39 @@ void MOOSNode::Translate(CMOOSMsg &msg)
         m_pool->helm_status.update_vars = parseCommonMoosMsg(msg.GetAsString());
     } else if ( key == "IVPHELM_ALLSTOP" ) {
         m_pool->helm_status.allstop_msg = msg.GetAsString();
-    }
-
-    else if ( key == "MOOS_MANUAL_OVERIDE") {
+    } else if ( key == "MOOS_MANUAL_OVERIDE") {
         m_pool->helm_status.manual_overide = msg.GetAsString() == "true";
     }
+    // IMU
+    else if ( key == "IMU_ROLL") {
+        m_pool->imu.roll = msg.GetDouble();
+    } else if ( key == "IMU_PITCH") {
+        m_pool->imu.pitch = msg.GetDouble();
+    } else if ( key == "IMU_YAW") {
+        m_pool->imu.yaw = msg.GetDouble();
+    } else if ( key == "IMU_HEADING") {
+        m_pool->imu.heading = msg.GetDouble();
+    } else if ( key == "IMU_X_ACCEL") {
+        m_pool->imu.x_accel = msg.GetDouble();
+        m_pool->imu._fill.x_accel |= 1;
+    } else if ( key == "IMU_Y_ACCEL") {
+        m_pool->imu.y_accel = msg.GetDouble();
+        m_pool->imu._fill.y_accel |= 1;
+    } else if ( key == "IMU_Z_ACCEL") {
+        m_pool->imu.z_accel = msg.GetDouble();
+        m_pool->imu._fill.z_accel |= 1;
+    } else if ( key == "IMU_X_GYRO") {
+        m_pool->imu.x_gyro = msg.GetDouble();
+        m_pool->imu._fill.x_gyro |= 1;
+    } else if ( key == "IMU_Y_GYRO") {
+        m_pool->imu.y_gyro = msg.GetDouble();
+        m_pool->imu._fill.y_gyro |= 1;
+    } else if ( key == "IMU_Z_GYRO") {
+        m_pool->imu.z_gyro = msg.GetDouble();
+        m_pool->imu._fill.z_gyro |= 1;
+    }
+
+
 
 
     else {
@@ -264,6 +292,11 @@ void MOOSNode::Translate(CMOOSMsg &msg)
     {
         FLUSH_FILL(m_pool->waypoint);
 
+    }
+
+    if(TEST_IMU_FILL(m_pool->imu)) {
+        FLUSH_FILL(m_pool->imu);
+        m_rosNode->PublishImu();
     }
 
 }
