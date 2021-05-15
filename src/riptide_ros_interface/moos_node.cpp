@@ -123,6 +123,8 @@ void MOOSNode::DoRegistrations()
         "NAV_X",
         "NAV_Y",
         "NAV_Z",
+        "NAV_ROLL",
+        "NAV_PITCH",
         "NAV_YAW",
         "NAV_DEPTH",
         "NAV_HEADING",
@@ -183,6 +185,7 @@ void MOOSNode::DoRegistrations()
 void MOOSNode::Translate(CMOOSMsg &msg) {
     const auto &key = msg.GetKey();
     const std::lock_guard<std::mutex> lock(m_pool->lock);
+
     // NAV
     if (key == "NAV_X") {
         m_pool->nav.x = msg.GetDouble();
@@ -193,6 +196,12 @@ void MOOSNode::Translate(CMOOSMsg &msg) {
     } else if (key == "NAV_Z") {
         m_pool->nav.z = msg.GetDouble();
         m_pool->nav._fill.z |= 1;
+    } else if (key == "NAV_ROLL") {
+        m_pool->nav.roll = msg.GetDouble();
+        m_pool->nav._fill.roll |= 1;
+    } else if (key == "NAV_PITCH") {
+        m_pool->nav.pitch = msg.GetDouble();
+        m_pool->nav._fill.pitch |= 1;
     } else if (key == "NAV_YAW") {
         m_pool->nav.yaw = msg.GetDouble();
         m_pool->nav._fill.yaw |= 1;
@@ -254,30 +263,28 @@ void MOOSNode::Translate(CMOOSMsg &msg) {
         // IMU
     else if (key == "IMU_ROLL") {
         m_pool->imu.roll = msg.GetDouble();
+        m_pool->imu._fill.roll |= 1;
     } else if (key == "IMU_PITCH") {
         m_pool->imu.pitch = msg.GetDouble();
+        m_pool->imu._fill.pitch |= 1;
     } else if (key == "IMU_YAW") {
         m_pool->imu.yaw = msg.GetDouble();
+        m_pool->imu._fill.yaw |= 1;
     } else if (key == "IMU_HEADING") {
         m_pool->imu.heading = msg.GetDouble();
+        m_pool->imu._fill.heading |= 1;
     } else if (key == "IMU_X_ACCEL") {
         m_pool->imu.x_accel = msg.GetDouble();
-        m_pool->imu._fill.x_accel |= 1;
     } else if (key == "IMU_Y_ACCEL") {
         m_pool->imu.y_accel = msg.GetDouble();
-        m_pool->imu._fill.y_accel |= 1;
     } else if (key == "IMU_Z_ACCEL") {
         m_pool->imu.z_accel = msg.GetDouble();
-        m_pool->imu._fill.z_accel |= 1;
     } else if (key == "IMU_X_GYRO") {
         m_pool->imu.x_gyro = msg.GetDouble();
-        m_pool->imu._fill.x_gyro |= 1;
     } else if (key == "IMU_Y_GYRO") {
         m_pool->imu.y_gyro = msg.GetDouble();
-        m_pool->imu._fill.y_gyro |= 1;
     } else if (key == "IMU_Z_GYRO") {
         m_pool->imu.z_gyro = msg.GetDouble();
-        m_pool->imu._fill.z_gyro |= 1;
     }
 
     // GPS
@@ -367,6 +374,7 @@ bool MOOSNode::publishIvpHelmUpdate(const std::string& name, bool state)
     return toMOOS(name, state ? "true" : "false");
 }
 
+// TODO: investigate the reason behind this typo
 bool MOOSNode::publishManualOveride(bool state) {
     return toMOOS("MOOS_MANUAL_OVERIDE", state ? "true" : "false");
 }

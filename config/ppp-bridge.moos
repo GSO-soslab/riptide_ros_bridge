@@ -4,18 +4,17 @@
 // Date: Dec 29, 2020
 //------------------------------------------------
 
-ServerHost = localhost
+ServerHost = beaglebone.ppp
 ServerPort = 9000
-Simulator  = true
 
-Community    = alpha
+Community    = uuuv
 MOOSTimeWarp = 1
 
 Processconfig = ANTLER
 {
   MSBetweenLaunches = 100
    
-  Run = MOOSDB           @ NewConsole = false
+  // Run = MOOSDB           @ NewConsole = false
   Run = MOOS_ROS_BRIDGE  @ NewConsole = false
   Run = uMS              @ NewConsole = false 
 }

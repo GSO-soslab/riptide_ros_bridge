@@ -112,6 +112,7 @@ namespace soslab {
     void ROSNode::PublishImu() {
         m_imu_msg.header.seq += 1;
 
+        m_imu_msg.header.stamp = ros::Time::now();
         tf2::Quaternion q;
         q.setRPY(m_pool->imu.roll, m_pool->imu.pitch, m_pool->imu.yaw);
         m_imu_msg.orientation.w = q.getW();

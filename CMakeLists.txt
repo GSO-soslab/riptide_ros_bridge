@@ -138,38 +138,19 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-## Declare a C++ library
-# add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/riptide-ros-bridge.cpp
-# )
-
-## Add cmake target dependencies of the library
-## as an example, code may need to be generatedRIPTIDE_ROS_INTERFACE_ before libraries
-## either from message generation or dynamic reconfigure
-
-## Declare a C++ executable
-## With catkin_make all packages are built within a single CMake context
-## The recommended prefix ensures that target names across packages don't collide
-add_library(interface
+add_executable(interface_node
+  src/interface_node.cpp
   src/riptide_ros_interface/moos_node.cpp
   src/riptide_ros_interface/ros_node.cpp
   src/riptide_ros_interface/process.cpp
 )
-add_dependencies(interface ${interface_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
-# Specify libraries to link a library or executable target against
-target_link_libraries(interface
+target_link_libraries(interface_node
   ${catkin_LIBRARIES}
   ${MOOS_LIBRARIES}
 )
 
-add_executable(interface_node
-   src/interface_node.cpp
-)
-
-target_link_libraries(interface_node
-  interface
-)
+add_dependencies(interface_node ${interface_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -195,7 +176,7 @@ target_link_libraries(interface_node
 #  )
 
 # Mark executables and/or libraries for installation
-install(TARGETS interface
+install(TARGETS interface_node
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}

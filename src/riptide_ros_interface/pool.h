@@ -12,6 +12,10 @@ namespace soslab {
         double y;
         /*! @brief: moos "NAV_Z" */
         double z;
+        /*! @brief: moos "NAV_ROLL" */
+        double roll;
+        /*! @brief: moos "NAV_PITCH" */
+        double pitch;
         /*! @brief: moos "NAV_YAW" */
         double yaw;
         /*! @brief: moos "NAV_LONG" */
@@ -28,6 +32,8 @@ namespace soslab {
             unsigned x : 1;
             unsigned y : 1;
             unsigned z : 1;
+            unsigned roll : 1;
+            unsigned pitch : 1;
             unsigned yaw : 1;
             unsigned depth : 1;
             unsigned longitude : 1;
@@ -39,16 +45,11 @@ namespace soslab {
     } nav_t;
 
 #define TEST_NAV_FILL(o) \
-    o._fill.x &           \
-    o._fill.y &           \
-    o._fill.z &           \
+    o._fill.roll &         \
+    o._fill.pitch &         \
     o._fill.yaw &         \
     o._fill.depth &       \
-    o._fill.longitude &   \
-    o._fill.latitude &    \
-    o._fill.heading &     \
-    o._fill.speed
-
+    o._fill.heading
 
     typedef struct waypoint_t {
         /*! @brief: moos "WPT_STAT" */
@@ -103,30 +104,20 @@ namespace soslab {
         int calib_accel;
         int calib_mag;
         struct fill_c {
-            unsigned x_accel : 1;
-            unsigned y_accel : 1;
-            unsigned z_accel : 1;
-            unsigned x_gyro : 1;
-            unsigned y_gyro : 1;
-            unsigned z_gyro : 1;
-            unsigned x_vel : 1;
-            unsigned y_vel : 1;
-            unsigned z_vel : 1;
+            unsigned roll : 1;
+            unsigned pitch : 1;
+            unsigned yaw : 1;
+            unsigned heading : 1;
         };
         fill_c _fill;
     } imu_t;
 
 
 #define TEST_IMU_FILL(w) \
-    w._fill.x_accel & \
-    w._fill.y_accel & \
-    w._fill.z_accel & \
-    w._fill.x_gyro & \
-    w._fill.y_gyro & \
-    w._fill.z_gyro & \
-    w._fill.x_vel & \
-    w._fill.y_vel & \
-    w._fill.z_vel
+    w._fill.roll & \
+    w._fill.pitch & \
+    w._fill.yaw & \
+    w._fill.heading
 
     typedef struct gps_t {
         // 1hz

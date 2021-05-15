@@ -4,7 +4,7 @@
             pkg="riptide_ros_interface"
             type="interface_node"
             name="riptide_interface"
-            args="-m $(find riptide_ros_interface)/config/ppp-bridge.moos"
+            args="-m $(find riptide_ros_interface)/config/wifi-bridge.moos"
             output="screen"
     />
 
