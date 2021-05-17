@@ -3,7 +3,7 @@
     <node
             pkg="riptide_ros_interface"
             type="interface_node"
-            name="riptide_interface"
+            name="moos"
             args="-m $(find riptide_ros_interface)/config/wifi-bridge.moos"
             output="screen"
     />

@@ -338,8 +338,8 @@ void MOOSNode::Translate(CMOOSMsg &msg) {
     }
 
     if(TEST_NAV_FILL(m_pool->nav)) {
-        FLUSH_FILL(m_pool->nav);
         m_rosNode->PublishNav();
+        FLUSH_FILL(m_pool->nav);
     }
 
     if(TEST_WAYPOINT_FILL(m_pool->waypoint)) {
@@ -348,13 +348,13 @@ void MOOSNode::Translate(CMOOSMsg &msg) {
     }
 
     if(TEST_IMU_FILL(m_pool->imu)) {
-        FLUSH_FILL(m_pool->imu);
         m_rosNode->PublishImu();
+        FLUSH_FILL(m_pool->imu);
     }
 
     if(TEST_GPS_FILL(m_pool->gps)) {
-        FLUSH_FILL(m_pool->gps);
         m_rosNode->PublishGps();
+        FLUSH_FILL(m_pool->gps);
     }
 
 }
