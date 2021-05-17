@@ -6,6 +6,7 @@
 
 #include "ros/ros.h"
 #include "std_srvs/SetBool.h"
+#include "std_srvs/Empty.h"
 
 #include "pool.h"
 #include "geometry_msgs/Point.h"
@@ -59,6 +60,8 @@ namespace soslab {
         /** @brief: m_manual_overide_service */
         ros::ServiceServer m_manual_overide_service;
 
+        ros::ServiceServer m_calibration_service;
+
         std::shared_ptr<MOOSNode> m_moosNode;
 
         std::shared_ptr<pool_t> m_pool;
@@ -71,6 +74,8 @@ namespace soslab {
 
         bool ivpHelmConditionService(riptide_ros_interface::SetHelmCondition::Request& req,
                                      riptide_ros_interface::SetHelmCondition::Response& res);
+
+        bool startCalibration(std_srvs::Empty::Request& req, std_srvs::Empty::Response& res);
 
         bool manualOverideService(std_srvs::SetBool::Request& req,
                                   std_srvs::SetBool::Response& res);

@@ -30,6 +30,8 @@ namespace soslab {
 
         bool publishManualOveride(bool state);
 
+        bool triggerCalibration();
+
         void SetPool(std::shared_ptr<pool_t> p) { m_pool = p; }
 
         void SetRosNode(std::shared_ptr<ROSNode> n) { m_rosNode = n; }

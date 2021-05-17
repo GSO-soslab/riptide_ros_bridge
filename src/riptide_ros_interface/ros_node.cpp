@@ -23,6 +23,7 @@ namespace soslab {
         m_dep_service = m_pnh.advertiseService("send_depth", &ROSNode::depthService, this);
         m_helm_state_service = m_pnh.advertiseService("set_helm_state", &ROSNode::ivpHelmConditionService, this);
         m_manual_overide_service = m_pnh.advertiseService("set_manual_overide", &ROSNode::manualOverideService, this);
+        m_calibration_service = m_pnh.advertiseService("start_calibration", &ROSNode::startCalibration, this);
 
     }
 
@@ -67,6 +68,12 @@ namespace soslab {
         m_pool->depth.update = "depth = " + std::to_string(req.depth);
 
         return m_moosNode->publishDepthUpdate();
+    }
+
+    bool ROSNode::startCalibration(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res) {
+        const std::lock_guard<std::mutex> lock(m_pool->lock);
+
+        return m_moosNode->triggerCalibration();
     }
 
     bool ROSNode::ivpHelmConditionService(riptide_ros_interface::SetHelmCondition::Request &req,

@@ -364,6 +364,11 @@ bool MOOSNode::publishWayPointUpdate()
     return toMOOS("WPT_UPDATE", m_pool->waypoint.update);
 }
 
+bool MOOSNode::triggerCalibration()
+{
+    return toMOOS("RT_CALIBRATE_IMU", "1");
+}
+
 bool MOOSNode::publishDepthUpdate()
 {
     return toMOOS("DEP_UPDATE", m_pool->depth.update);
