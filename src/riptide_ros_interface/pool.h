@@ -103,6 +103,11 @@ namespace soslab {
         int calib_gyro;
         int calib_accel;
         int calib_mag;
+        
+        float w_quat;
+        float x_quat;
+        float y_quat;
+        float z_quat;
         struct fill_c {
             unsigned roll : 1;
             unsigned pitch : 1;
@@ -216,6 +221,9 @@ namespace soslab {
 
         imu_t imu;
 
+        //!@note: microstrain imu
+        imu_t ms_imu;
+        
         ivphelm_status_t helm_status;
 
         std::mutex lock;

@@ -116,70 +116,8 @@ bool MOOSNode::OnStartUp()
 
 void MOOSNode::DoRegistrations()
 {
-    // todo: read them from config file
-    auto list =
-    {
-    /*! @note: NAV  */
-        "NAV_X",
-        "NAV_Y",
-        "NAV_Z",
-        "NAV_ROLL",
-        "NAV_PITCH",
-        "NAV_YAW",
-        "NAV_DEPTH",
-        "NAV_HEADING",
-        "NAV_LAT",
-        "NAV_LONG",
-        "NAV_SPEED",
-    /*! @note: WAYPOINT  */
-        "WPT_STAT",
-        "WPT_ODO",
-        "WPT_EFF_DIST_ALL",
-        "WPT_EFF_DIST_LEG",
-        "WPT_EFF_SUMM_ALL",
-        "WPT_UPDATE",
-    /*! @note: IVPHELM */
-        "IVPHELM_STATEVARS",
-        "IVPHELM_STATE",
-        "IVPHELM_UPDATEVARS",
-        "IVPHELM_ALLSTOP",
-        "MOOS_MANUAL_OVERIDE",
-    /*! @note: IMU */
-        "IMU_ROLL",
-        "IMU_PITCH",
-        "IMU_YAW",
-        "IMU_HEADING",
-        "IMU_X_ACCEL",
-        "IMU_Y_ACCEL",
-        "IMU_Z_ACCEL",
-        "IMU_X_GYRO",
-        "IMU_Y_GYRO",
-        "IMU_Z_GYRO",
-    /*! @note: GPS */
-        "GPS_ANTENNA_OKAY",
-        "GPS_FIX",
-        "GPS_HDOP",
-        "GPS_LAST_COMMS",
-        "GPS_QUALITY",
-        "GPS_X",
-        "GPS_Y",
-        "GPS_LONGIGUTUDE",
-        "GPS_LATITUDE",
-        "GPS_SPEED",
-        "GPS_SAT",
-        "ORIGIN_LATITUDE",
-        "ORIGIN_LONGITUDE"
-    /*! @note: MOOS general */
-    };
-
-    for(const auto& i : list)
-    {
-        m_Comms.Register(i, 0);
-        char buf[512];
-        sprintf(buf, "Subscribing to %s\n", i);
-        MOOSTrace(buf);
-    }
-
+    // take 'em all
+    m_Comms.Register("*","*", 0);
 }
 
 void MOOSNode::Translate(CMOOSMsg &msg) {
@@ -286,7 +224,42 @@ void MOOSNode::Translate(CMOOSMsg &msg) {
     } else if (key == "IMU_Z_GYRO") {
         m_pool->imu.z_gyro = msg.GetDouble();
     }
-
+    
+    // microstrain IMU
+    else if (key == "MS_IMU_ROLL") {
+        m_pool->ms_imu.roll = msg.GetDouble();
+        m_pool->ms_imu._fill.roll |= 1;
+    } else if (key == "MS_IMU_PITCH") {
+        m_pool->ms_imu.pitch = msg.GetDouble();
+        m_pool->ms_imu._fill.pitch |= 1;
+    } else if (key == "MS_IMU_YAW") {
+        m_pool->ms_imu.yaw = msg.GetDouble();
+        m_pool->ms_imu._fill.yaw |= 1;
+    } else if (key == "MS_IMU_HEADING") {
+        m_pool->ms_imu.heading = msg.GetDouble();
+        m_pool->ms_imu._fill.heading |= 1;
+    } else if (key == "MS_IMU_X_ACCEL") {
+        m_pool->ms_imu.x_accel = msg.GetDouble();
+    } else if (key == "MS_IMU_Y_ACCEL") {
+        m_pool->ms_imu.y_accel = msg.GetDouble();
+    } else if (key == "MS_IMU_Z_ACCEL") {
+        m_pool->ms_imu.z_accel = msg.GetDouble();
+    } else if (key == "MS_IMU_X_GYRO") {
+        m_pool->ms_imu.x_gyro = msg.GetDouble();
+    } else if (key == "MS_IMU_Y_GYRO") {
+        m_pool->ms_imu.y_gyro = msg.GetDouble();
+    } else if (key == "MS_IMU_Z_GYRO") {
+        m_pool->ms_imu.z_gyro = msg.GetDouble();
+    } else if (key == "MS_IMU_W_QUAT") {
+        m_pool->ms_imu.w_quat = msg.GetDouble();
+    } else if (key == "MS_IMU_X_QUAT") {
+        m_pool->ms_imu.x_quat = msg.GetDouble();
+    } else if (key == "MS_IMU_Y_QUAT") {
+        m_pool->ms_imu.y_quat = msg.GetDouble();
+    } else if (key == "MS_IMU_Z_QUAT") {
+        m_pool->ms_imu.z_quat = msg.GetDouble();
+    }
+    
     // GPS
     else if (key == "GPS_ANTENNA_OKAY") {
         m_pool->gps.antenna_okay = (int)msg.GetDouble();
@@ -350,6 +323,11 @@ void MOOSNode::Translate(CMOOSMsg &msg) {
     if(TEST_IMU_FILL(m_pool->imu)) {
         m_rosNode->PublishImu();
         FLUSH_FILL(m_pool->imu);
+    }
+
+    if(TEST_IMU_FILL(m_pool->ms_imu)) {
+        m_rosNode->PublishMsImu();
+        FLUSH_FILL(m_pool->ms_imu);
     }
 
     if(TEST_GPS_FILL(m_pool->gps)) {

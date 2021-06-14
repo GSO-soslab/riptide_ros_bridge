@@ -16,6 +16,7 @@ namespace soslab {
         m_nav_publisher = m_pnh.advertise<riptide_ros_interface::Nav>("navigation", 1000);
         m_ivp_helm_state_publisher = m_pnh.advertise<riptide_ros_interface::IvpHelmState>("helm_state", 1000);
         m_imu_publisher = m_pnh.advertise<sensor_msgs::Imu>("imu", 1000);
+        m_ms_imu_publisher = m_pnh.advertise<sensor_msgs::Imu>("ms_imu", 1000);
         m_gps_publisher = m_pnh.advertise<riptide_ros_interface::Gps>("gps",1000);
 
         // Services
@@ -137,6 +138,28 @@ namespace soslab {
         m_imu_msg.angular_velocity.z = m_pool->imu.z_gyro;
 
         m_imu_publisher.publish(m_imu_msg);
+    }
+
+
+    void ROSNode::PublishMsImu() {
+        m_ms_imu_msg.header.seq += 1;
+
+        m_ms_imu_msg.header.stamp = ros::Time::now();
+        m_ms_imu_msg.orientation.w = m_pool->ms_imu.w_quat;
+        m_ms_imu_msg.orientation.x = m_pool->ms_imu.x_quat;
+        m_ms_imu_msg.orientation.y = m_pool->ms_imu.y_quat;
+        m_ms_imu_msg.orientation.z = m_pool->ms_imu.z_quat;
+
+        // TODO: This comes as velocity, maybe we should turn this into acceleration
+        m_ms_imu_msg.linear_acceleration.x = m_pool->ms_imu.x_vel;
+        m_ms_imu_msg.linear_acceleration.y = m_pool->ms_imu.z_vel;
+        m_ms_imu_msg.linear_acceleration.z = m_pool->ms_imu.y_vel;
+
+        m_ms_imu_msg.angular_velocity.x = m_pool->ms_imu.x_gyro;
+        m_ms_imu_msg.angular_velocity.y = m_pool->ms_imu.y_gyro;
+        m_ms_imu_msg.angular_velocity.z = m_pool->ms_imu.z_gyro;
+
+        m_ms_imu_publisher.publish(m_imu_msg);
     }
 
     void ROSNode::PublishGps() {
