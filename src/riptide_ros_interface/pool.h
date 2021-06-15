@@ -251,6 +251,7 @@ namespace soslab {
 
 #define FLUSH_FILL(o) *((uint16_t*)&o._fill) = 0
 
+#define FLUSH_FILL_EXTENDED(o) *((uint32_t*)&o._fill_extended) = 0
 
     typedef struct pool_t {
         nav_t nav;

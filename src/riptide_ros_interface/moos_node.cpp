@@ -333,7 +333,7 @@ void MOOSNode::Translate(CMOOSMsg &msg) {
 
     if(TEST_IMU_FILL_EXTENDED(m_pool->ms_imu)) {
         m_rosNode->PublishMsImu();
-        FLUSH_FILL(m_pool->ms_imu);
+        FLUSH_FILL_EXTENDED(m_pool->ms_imu);
     }
 
     if(TEST_GPS_FILL(m_pool->gps)) {
