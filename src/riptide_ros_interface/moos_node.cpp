@@ -228,36 +228,42 @@ void MOOSNode::Translate(CMOOSMsg &msg) {
     // microstrain IMU
     else if (key == "MS_IMU_ROLL") {
         m_pool->ms_imu.roll = msg.GetDouble();
-        m_pool->ms_imu._fill.roll |= 1;
     } else if (key == "MS_IMU_PITCH") {
         m_pool->ms_imu.pitch = msg.GetDouble();
-        m_pool->ms_imu._fill.pitch |= 1;
     } else if (key == "MS_IMU_YAW") {
         m_pool->ms_imu.yaw = msg.GetDouble();
-        m_pool->ms_imu._fill.yaw |= 1;
     } else if (key == "MS_IMU_HEADING") {
         m_pool->ms_imu.heading = msg.GetDouble();
-        m_pool->ms_imu._fill.heading |= 1;
     } else if (key == "MS_IMU_X_ACCEL") {
         m_pool->ms_imu.x_accel = msg.GetDouble();
+        m_pool->ms_imu._fill_extended.x_accel |= 1;
     } else if (key == "MS_IMU_Y_ACCEL") {
         m_pool->ms_imu.y_accel = msg.GetDouble();
+        m_pool->ms_imu._fill_extended.y_accel |= 1;
     } else if (key == "MS_IMU_Z_ACCEL") {
         m_pool->ms_imu.z_accel = msg.GetDouble();
+        m_pool->ms_imu._fill_extended.z_accel |= 1;
     } else if (key == "MS_IMU_X_GYRO") {
         m_pool->ms_imu.x_gyro = msg.GetDouble();
+        m_pool->ms_imu._fill_extended.x_gyro |= 1;
     } else if (key == "MS_IMU_Y_GYRO") {
         m_pool->ms_imu.y_gyro = msg.GetDouble();
+        m_pool->ms_imu._fill_extended.y_gyro |= 1;
     } else if (key == "MS_IMU_Z_GYRO") {
         m_pool->ms_imu.z_gyro = msg.GetDouble();
+        m_pool->ms_imu._fill_extended.z_gyro |= 1;
     } else if (key == "MS_IMU_W_QUAT") {
         m_pool->ms_imu.w_quat = msg.GetDouble();
+        m_pool->ms_imu._fill_extended.w_quat |= 1;
     } else if (key == "MS_IMU_X_QUAT") {
         m_pool->ms_imu.x_quat = msg.GetDouble();
+        m_pool->ms_imu._fill_extended.x_quat |= 1;
     } else if (key == "MS_IMU_Y_QUAT") {
         m_pool->ms_imu.y_quat = msg.GetDouble();
+        m_pool->ms_imu._fill_extended.y_quat |= 1;
     } else if (key == "MS_IMU_Z_QUAT") {
         m_pool->ms_imu.z_quat = msg.GetDouble();
+        m_pool->ms_imu._fill_extended.z_quat |= 1;
     }
     
     // GPS
@@ -325,7 +331,7 @@ void MOOSNode::Translate(CMOOSMsg &msg) {
         FLUSH_FILL(m_pool->imu);
     }
 
-    if(TEST_IMU_FILL(m_pool->ms_imu)) {
+    if(TEST_IMU_FILL_EXTENDED(m_pool->ms_imu)) {
         m_rosNode->PublishMsImu();
         FLUSH_FILL(m_pool->ms_imu);
     }

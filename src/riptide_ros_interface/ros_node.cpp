@@ -159,13 +159,12 @@ namespace soslab {
         m_ms_imu_msg.angular_velocity.y = m_pool->ms_imu.y_gyro;
         m_ms_imu_msg.angular_velocity.z = m_pool->ms_imu.z_gyro;
 
-        m_ms_imu_publisher.publish(m_imu_msg);
+        m_ms_imu_publisher.publish(m_ms_imu_msg);
     }
 
     void ROSNode::PublishGps() {
         m_gps_msg.header.seq += 1;
         m_gps_msg.header.stamp = ros::Time::now();
-
 
         m_gps_msg.latitude = m_pool->gps.latitude;
         m_gps_msg.longitude = m_pool->gps.longitude;
@@ -178,6 +177,8 @@ namespace soslab {
         m_gps_msg.origin_longitude = m_pool->gps.origin_longitude;
         m_gps_msg.x = m_pool->gps.x;
         m_gps_msg.y = m_pool->gps.y;
+
+        m_gps_publisher.publish(m_gps_msg);
     }
 
     void ROSNode::PublishIvpHelmState() {

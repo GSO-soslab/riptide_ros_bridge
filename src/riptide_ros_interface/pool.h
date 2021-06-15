@@ -103,18 +103,32 @@ namespace soslab {
         int calib_gyro;
         int calib_accel;
         int calib_mag;
-        
+
         float w_quat;
         float x_quat;
         float y_quat;
         float z_quat;
+
         struct fill_c {
             unsigned roll : 1;
             unsigned pitch : 1;
             unsigned yaw : 1;
             unsigned heading : 1;
         };
+        struct fill_extended_c {
+            unsigned x_accel : 1;
+            unsigned y_accel : 1;
+            unsigned z_accel : 1;
+            unsigned x_gyro : 1;
+            unsigned y_gyro : 1;
+            unsigned z_gyro : 1;
+            unsigned w_quat : 1;
+            unsigned x_quat : 1;
+            unsigned y_quat : 1;
+            unsigned z_quat : 1;
+        };
         fill_c _fill;
+        fill_extended_c _fill_extended;
     } imu_t;
 
 
@@ -123,6 +137,36 @@ namespace soslab {
     w._fill.pitch & \
     w._fill.yaw & \
     w._fill.heading
+
+#define TEST_IMU_FILL_EXTENDED(w) \
+    w._fill_extended.x_accel &    \
+    w._fill_extended.y_accel &    \
+    w._fill_extended.z_accel &    \
+    w._fill_extended.x_gyro &     \
+    w._fill_extended.y_gyro &     \
+    w._fill_extended.z_gyro &     \
+    w._fill_extended.w_quat &     \
+    w._fill_extended.x_quat &     \
+    w._fill_extended.y_quat &     \
+    w._fill_extended.z_quat
+
+    typedef struct mag_t {
+        float x;
+        float y;
+        float z;
+
+        struct fill_c {
+            unsigned x : 1;
+            unsigned y : 1;
+            unsigned z : 1;
+        };
+        fill_c _fill;
+    } mag_t;
+
+#define TEST_MAG_FILL(w) \
+    w._fill.x &          \
+    w._fill.y &          \
+    w._fill.z
 
     typedef struct gps_t {
         // 1hz
@@ -223,7 +267,7 @@ namespace soslab {
 
         //!@note: microstrain imu
         imu_t ms_imu;
-        
+
         ivphelm_status_t helm_status;
 
         std::mutex lock;
