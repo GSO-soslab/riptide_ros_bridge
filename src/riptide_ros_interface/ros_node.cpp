@@ -151,9 +151,9 @@ namespace soslab {
         m_ms_imu_msg.orientation.z = m_pool->ms_imu.z_quat;
 
         // TODO: This comes as velocity, maybe we should turn this into acceleration
-        m_ms_imu_msg.linear_acceleration.x = m_pool->ms_imu.x_vel;
-        m_ms_imu_msg.linear_acceleration.y = m_pool->ms_imu.z_vel;
-        m_ms_imu_msg.linear_acceleration.z = m_pool->ms_imu.y_vel;
+        m_ms_imu_msg.linear_acceleration.x = m_pool->ms_imu.x_accel;
+        m_ms_imu_msg.linear_acceleration.y = m_pool->ms_imu.z_accel;
+        m_ms_imu_msg.linear_acceleration.z = m_pool->ms_imu.y_accel;
 
         m_ms_imu_msg.angular_velocity.x = m_pool->ms_imu.x_gyro;
         m_ms_imu_msg.angular_velocity.y = m_pool->ms_imu.y_gyro;
