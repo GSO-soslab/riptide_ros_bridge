@@ -61,6 +61,7 @@ add_message_files(
     StringMap.msg
     Nav.msg
     Gps.msg
+    Pressure.msg
 )
 
 ## Generate services in the 'srv' folder
