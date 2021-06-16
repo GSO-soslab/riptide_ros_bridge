@@ -11,11 +11,14 @@
 #include "pool.h"
 #include "geometry_msgs/Point.h"
 #include "sensor_msgs/Imu.h"
+#include "geometry_msgs/Vector3Stamped.h"
+
 
 // MSG
 #include "riptide_ros_interface/Nav.h"
 #include "riptide_ros_interface/IvpHelmState.h"
 #include "riptide_ros_interface/Gps.h"
+#include "riptide_ros_interface/Pressure.h"
 
 // SRV
 #include "riptide_ros_interface/SetWayPoint.h"
@@ -34,6 +37,10 @@ namespace soslab {
         sensor_msgs::Imu m_imu_msg;
         sensor_msgs::Imu m_ms_imu_msg;
 
+        geometry_msgs::Vector3Stamped m_mag;
+
+        riptide_ros_interface::Pressure m_pressure;
+
         riptide_ros_interface::IvpHelmState m_ivp_helm_state_msg;
 
     protected:
@@ -49,7 +56,11 @@ namespace soslab {
 
         ros::Publisher m_gps_publisher;
 
+        ros::Publisher m_pressure_publisher;
+
         ros::Publisher m_ivp_helm_state_publisher;
+
+        ros::Publisher m_mag_publisher;
 
         /** @brief: Receive and transmit way point to moos waypoint behavior */
         ros::ServiceServer m_wpt_service;
@@ -102,6 +113,10 @@ namespace soslab {
         void PublishGps();
 
         void PublishMsImu();
+
+        void PublishPressure();
+
+        void PublishMag();
 
     };
     

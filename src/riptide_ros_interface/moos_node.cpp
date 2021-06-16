@@ -157,7 +157,6 @@ void MOOSNode::Translate(CMOOSMsg &msg) {
         m_pool->nav._fill.longitude |= 1;
     } else if (key == "NAV_SPEED") {
         m_pool->nav.speed = msg.GetDouble();
-        m_pool->nav._fill.speed |= 1;
     }
 
         // BHV WAYPOINT
@@ -224,7 +223,31 @@ void MOOSNode::Translate(CMOOSMsg &msg) {
     } else if (key == "IMU_Z_GYRO") {
         m_pool->imu.z_gyro = msg.GetDouble();
     }
-    
+
+    else if (key == "PS_TEMP") {
+        m_pool->ps.temp = msg.GetDouble();
+        m_pool->ps._fill.temp |= 1;
+    } else if (key == "PS_PRESSURE") {
+        m_pool->ps.pressure= msg.GetDouble();
+        m_pool->ps._fill.pressure |= 1;
+    } else if (key == "PS_FILTERED_DEPTH") {
+        m_pool->ps.filtered_depth = msg.GetDouble();
+        m_pool->ps._fill.filtered_depth |= 1;
+    } else if (key == "PS_DEPTH") {
+        m_pool->ps.depth = msg.GetDouble();
+        m_pool->ps._fill.depth |= 1;
+    } else if (key == "PS_BAD_TEMP") {
+        m_pool->ps.bad_temp = msg.GetDouble();
+        m_pool->ps._fill.bad_temp |= 1;
+    } else if (key == "PS_BAD_PRESSURE") {
+        m_pool->ps.bad_pressure = msg.GetDouble();
+        m_pool->ps._fill.bad_pressure |= 1;
+    } else if (key == "PS_STATUS") {
+        m_pool->ps.status = msg.GetDouble();
+        m_pool->ps._fill.status |= 1;
+    }
+
+
     // microstrain IMU
     else if (key == "MS_ROLL") {
         m_pool->ms_imu.roll = msg.GetDouble();
@@ -265,14 +288,26 @@ void MOOSNode::Translate(CMOOSMsg &msg) {
         m_pool->ms_imu.z_quat = msg.GetDouble();
         m_pool->ms_imu._fill_extended.z_quat |= 1;
     }
-    
-    // GPS
+
+    else if (key == "MSRAW_X_MAG") {
+        m_pool->mag.x = msg.GetDouble();
+        m_pool->mag._fill.x |= 1;
+        m_pool->mag.time = msg.m_dfTime;
+    } else if (key == "MSRAW_Y_MAG") {
+        m_pool->mag.y = msg.GetDouble();
+        m_pool->mag._fill.y |= 1;
+        m_pool->mag.time = msg.m_dfTime;
+    } else if (key == "MSRAW_Z_MAG") {
+        m_pool->mag.z = msg.GetDouble();
+        m_pool->mag._fill.z |= 1;
+        m_pool->mag.time = msg.m_dfTime;
+    }
+
+        // GPS
     else if (key == "GPS_ANTENNA_OKAY") {
         m_pool->gps.antenna_okay = (int)msg.GetDouble();
-        m_pool->gps._fill.antenna_okay |= 1;
     } else if (key == "GPS_PARSE_ERRORS") {
         m_pool->gps.parse_errors = (int)msg.GetDouble();
-        m_pool->gps._fill.parse_errors |= 1;
     } else if (key == "GPS_FIX") {
         m_pool->gps.fix = (int)msg.GetDouble();
         m_pool->gps._fill.fix |= 1;
@@ -296,14 +331,33 @@ void MOOSNode::Translate(CMOOSMsg &msg) {
         m_pool->gps.sat = (int)msg.GetDouble();
         m_pool->gps._fill.sat |= 1;
     } else if (key == "ORIGIN_LONGITUDE") {
-        m_pool->gps.origin_latitude = msg.GetDouble();
+        m_pool->gps.origin_longitude = msg.GetDouble();
     } else if (key == "ORIGIN_LATITUDE") {
         m_pool->gps.origin_latitude = msg.GetDouble();
     } else if (key == "GPS_QUALITY") {
         m_pool->gps.quality = (int)msg.GetDouble();
-        m_pool->gps._fill.quality |= 1;
     }
 
+
+    if(key.rfind("GPS_", 0) == 0) {
+        m_pool->gps.time = msg.m_dfTime;
+    }
+
+    if(key.rfind("IMU_", 0) == 0) {
+        m_pool->imu.time = msg.m_dfTime;
+    }
+
+    if(key.rfind("PS_", 0) == 0) {
+        m_pool->ps.time = msg.m_dfTime;
+    }
+
+    if(key.rfind("MS_", 0) == 0) {
+        m_pool->ms_imu.time = msg.m_dfTime;
+    }
+
+    if(key.rfind("IVPHELM_", 0) == 0) {
+        m_pool->helm_status.time = msg.m_dfTime;
+    }
 
     else {
         auto state_key_find = std::find(
@@ -313,6 +367,7 @@ void MOOSNode::Translate(CMOOSMsg &msg) {
                 );
         if(state_key_find != m_pool->helm_status.condition_vars.end()) {
             m_pool->helm_status.conditions[key] = msg.GetAsString() == "true";
+
         }
     }
 
@@ -340,6 +395,17 @@ void MOOSNode::Translate(CMOOSMsg &msg) {
         m_rosNode->PublishGps();
         FLUSH_FILL(m_pool->gps);
     }
+
+    if(TEST_PS_FILL(m_pool->ps)) {
+        m_rosNode->PublishPressure();
+        FLUSH_FILL(m_pool->ps);
+    }
+
+    if(TEST_MAG_FILL(m_pool->mag)) {
+        m_rosNode->PublishMag();
+        FLUSH_FILL(m_pool->mag);
+    }
+
 
 }
 

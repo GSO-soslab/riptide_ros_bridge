@@ -6,6 +6,7 @@
 
 namespace soslab {
     typedef struct nav_t {
+        double time;
         /*! @brief: moos "NAV_X" */
         double x;
         /*! @brief: moos "NAV_Y" */
@@ -39,7 +40,6 @@ namespace soslab {
             unsigned longitude : 1;
             unsigned latitude : 1;
             unsigned heading : 1;
-            unsigned speed : 1;
         };
         fill_c _fill;
     } nav_t;
@@ -78,21 +78,23 @@ namespace soslab {
     w._fill.update
 
     typedef struct imu_t {
+        double time;
+
         // 50hz
-        float x_accel;
-        float y_accel;
-        float z_accel;
-        float x_gyro;
-        float y_gyro;
-        float z_gyro;
-        float x_vel;
-        float y_vel;
-        float z_vel;
+        double x_accel;
+        double y_accel;
+        double z_accel;
+        double x_gyro;
+        double y_gyro;
+        double z_gyro;
+        double x_vel;
+        double y_vel;
+        double z_vel;
         // 10hz
-        float roll;
-        float pitch;
-        float yaw;
-        float heading;
+        double roll;
+        double pitch;
+        double yaw;
+        double heading;
         // 1hz
         int status;
         int hw_status;
@@ -104,10 +106,10 @@ namespace soslab {
         int calib_accel;
         int calib_mag;
 
-        float w_quat;
-        float x_quat;
-        float y_quat;
-        float z_quat;
+        double w_quat;
+        double x_quat;
+        double y_quat;
+        double z_quat;
 
         struct fill_c {
             unsigned roll : 1;
@@ -151,9 +153,10 @@ namespace soslab {
     w._fill_extended.z_quat
 
     typedef struct mag_t {
-        float x;
-        float y;
-        float z;
+        double time;
+        double x;
+        double y;
+        double z;
 
         struct fill_c {
             unsigned x : 1;
@@ -169,19 +172,20 @@ namespace soslab {
     w._fill.z
 
     typedef struct gps_t {
+        double time;
         // 1hz
-        float latitude;
-        float longitude;
+        double latitude;
+        double longitude;
         int quality;
         int sat;
-        float hdop;
+        double hdop;
         int fix;
-        float speed;
-        float heading;
-        float origin_latitude;
-        float origin_longitude;
-        float x;
-        float y;
+        double speed;
+        double heading;
+        double origin_latitude;
+        double origin_longitude;
+        double x;
+        double y;
         int status;
         bool antenna_okay;
         int last_comms;
@@ -189,39 +193,45 @@ namespace soslab {
         struct fill_c {
             unsigned fix : 1;
             unsigned sat : 1;
-            unsigned parse_errors : 1;
-            unsigned antenna_okay : 1;
-            unsigned quality : 1 ;
         };
         fill_c _fill;
     } gps_t;
 
 #define TEST_GPS_FILL(w) \
     w._fill.fix &        \
-    w._fill.sat &        \
-    w._fill.parse_errors & \
-    w._fill.antenna_okay & \
-    w._fill.quality
+    w._fill.sat
 
     //! @brief: Pressure message
     typedef struct ps_t {
+        double time;
+        double pressure;
+        double depth;
+        double temp;
+        double filtered_depth;
         int status;
-        int bat_temp;
+        int bad_temp;
         int bad_pressure;
         struct fill_c {
+            unsigned pressure : 1;
+            unsigned depth : 1;
+            unsigned temp : 1;
+            unsigned filtered_depth : 1;
             unsigned status : 1;
             unsigned bad_temp : 1;
             unsigned bad_pressure : 1;
         };
-        fill_c fill;
+        fill_c _fill;
     } ps_t;
 
 #define TEST_PS_FILL(w) \
-    w._fill
+    w._fill.pressure &  \
+    w._fill.depth &     \
+    w._fill.temp &      \
+    w._fill.filtered_depth
 
     // todo: inspect for other variables related with depth
     typedef struct depth_t {
-        float depth;
+        double depth;
         std::string update;
         struct fill_c {
             unsigned depth : 1;
@@ -236,6 +246,7 @@ namespace soslab {
 
 
     typedef struct ivphelm_status_t {
+        double time;
         std::string state;
         std::map<std::string, bool> conditions;
         std::vector<std::string> condition_vars;
@@ -268,6 +279,8 @@ namespace soslab {
 
         //!@note: microstrain imu
         imu_t ms_imu;
+
+        mag_t mag;
 
         ivphelm_status_t helm_status;
 

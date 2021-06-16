@@ -13,11 +13,14 @@ namespace soslab {
         m_ivp_helm_state_msg.header.seq = 0;
 
         // Publishers
-        m_nav_publisher = m_pnh.advertise<riptide_ros_interface::Nav>("navigation", 1000);
+        m_nav_publisher = m_pnh.advertise<riptide_ros_interface::Nav>("pnav_state", 1000);
         m_ivp_helm_state_publisher = m_pnh.advertise<riptide_ros_interface::IvpHelmState>("helm_state", 1000);
-        m_imu_publisher = m_pnh.advertise<sensor_msgs::Imu>("imu", 1000);
-        m_ms_imu_publisher = m_pnh.advertise<sensor_msgs::Imu>("ms_imu", 1000);
+        m_imu_publisher = m_pnh.advertise<sensor_msgs::Imu>("embedded_imu", 1000);
+        m_ms_imu_publisher = m_pnh.advertise<sensor_msgs::Imu>("imu", 1000);
         m_gps_publisher = m_pnh.advertise<riptide_ros_interface::Gps>("gps",1000);
+
+        m_pressure_publisher = m_pnh.advertise<riptide_ros_interface::Pressure>("ps",1000);
+        m_mag_publisher = m_pnh.advertise<geometry_msgs::Vector3Stamped>("mag",1000);
 
         // Services
         m_wpt_service = m_pnh.advertiseService("send_waypoint", &ROSNode::wayPointService, this);
@@ -104,7 +107,7 @@ namespace soslab {
     void ROSNode::PublishNav() {
 
         m_nav_msg.header.seq += 1;
-        m_nav_msg.header.stamp = ros::Time::now();
+        m_nav_msg.header.stamp = ros::Time().fromNSec(m_pool->nav.time);
         m_nav_msg.x = m_pool->nav.x;
         m_nav_msg.y = m_pool->nav.y;
         m_nav_msg.z = m_pool->nav.z;
@@ -120,7 +123,7 @@ namespace soslab {
     void ROSNode::PublishImu() {
         m_imu_msg.header.seq += 1;
 
-        m_imu_msg.header.stamp = ros::Time::now();
+        m_imu_msg.header.stamp = ros::Time().fromNSec(m_pool->imu.time);
         tf2::Quaternion q;
         q.setRPY(m_pool->imu.roll, m_pool->imu.pitch, m_pool->imu.yaw);
         m_imu_msg.orientation.w = q.getW();
@@ -144,7 +147,7 @@ namespace soslab {
     void ROSNode::PublishMsImu() {
         m_ms_imu_msg.header.seq += 1;
 
-        m_ms_imu_msg.header.stamp = ros::Time::now();
+        m_ms_imu_msg.header.stamp = ros::Time().fromNSec(m_pool->ms_imu.time);
         m_ms_imu_msg.orientation.w = m_pool->ms_imu.w_quat;
         m_ms_imu_msg.orientation.x = m_pool->ms_imu.x_quat;
         m_ms_imu_msg.orientation.y = m_pool->ms_imu.y_quat;
@@ -164,7 +167,7 @@ namespace soslab {
 
     void ROSNode::PublishGps() {
         m_gps_msg.header.seq += 1;
-        m_gps_msg.header.stamp = ros::Time::now();
+        m_gps_msg.header.stamp = ros::Time().fromNSec(m_pool->gps.time);
 
         m_gps_msg.latitude = m_pool->gps.latitude;
         m_gps_msg.longitude = m_pool->gps.longitude;
@@ -183,7 +186,7 @@ namespace soslab {
 
     void ROSNode::PublishIvpHelmState() {
         m_ivp_helm_state_msg.header.seq += 1;
-        m_ivp_helm_state_msg.header.stamp = ros::Time::now();
+        m_ivp_helm_state_msg.header.stamp = ros::Time().fromNSec(m_pool->helm_status.time);
         m_ivp_helm_state_msg.state = m_pool->helm_status.state;
 
         m_ivp_helm_state_msg.condition_vars.clear();
@@ -207,5 +210,29 @@ namespace soslab {
         m_ivp_helm_state_msg.allstop_msg = m_pool->helm_status.allstop_msg;
 
         m_ivp_helm_state_publisher.publish(m_ivp_helm_state_msg);
+    }
+
+    void ROSNode::PublishMag() {
+        m_mag.header.seq += 1;
+        m_mag.header.stamp = ros::Time().fromNSec(m_pool->mag.time);
+
+        m_mag.vector.x = m_pool->mag.x;
+        m_mag.vector.y = m_pool->mag.y;
+        m_mag.vector.z = m_pool->mag.z;
+
+        m_mag_publisher.publish(m_mag);
+    }
+
+    void ROSNode::PublishPressure() {
+        m_pressure.header.seq += 1;
+        m_pressure.header.stamp = ros::Time().fromNSec(m_pool->ps.time);
+
+        m_pressure.status = m_pool->ps.status;
+        m_pressure.depth = m_pool->ps.depth;
+        m_pressure.filtered_depth = m_pool->ps.filtered_depth;
+        m_pressure.temp = m_pool->ps.temp;
+        m_pressure.pressure = m_pool->ps.pressure;
+
+        m_pressure_publisher.publish(m_pressure);
     }
 }
