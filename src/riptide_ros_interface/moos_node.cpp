@@ -18,7 +18,7 @@ void MOOSNode::Init(const char *MissionFile)
 
     th = std::thread(
         [this, MissionFile] {
-            Run("MOOS_ROS_BRIDGE", MissionFile);
+            Run("iRosBridge", MissionFile);
         }
     );
 }

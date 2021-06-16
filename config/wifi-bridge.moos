@@ -15,12 +15,12 @@ Processconfig = ANTLER
   MSBetweenLaunches = 100
    
   // Run = MOOSDB           @ NewConsole = false
-  Run = MOOS_ROS_BRIDGE  @ NewConsole = false
+  Run = iRosBridge  @ NewConsole = false
   Run = uMS              @ NewConsole = false 
 }
 
 
-ProcessConfig = MOOS_ROS_BRIDGE
+ProcessConfig = iRosBridge
 {
   AppTick    = 1
   CommsTick  = 20
