@@ -19,6 +19,7 @@ find_package(catkin REQUIRED COMPONENTS
   auv_msgs
   message_generation
   tf2
+  dvl_a50_ros
 )
 
 ## System dependencies are found with CMake's conventions
@@ -126,6 +127,7 @@ catkin_package(
     auv_msgs
     message_runtime
     tf2
+    dvl_a50_ros
 #  DEPENDS system_lib
 )
 

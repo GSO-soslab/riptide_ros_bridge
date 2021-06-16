@@ -244,6 +244,25 @@ namespace soslab {
     w._fill.depth & \
     w._fill.update
 
+    typedef struct dvl_t {
+        double time;
+        double x;
+        double y;
+        double z;
+        struct fill_c {
+            unsigned x : 1;
+            unsigned y : 1;
+            unsigned z : 1;
+        };
+        fill_c _fill;
+    } dvl_t;
+
+#define TEST_DVL_FILL(w) \
+    w._fill.x & \
+    w._fill.y & \
+    w._fill.z
+
+
 
     typedef struct ivphelm_status_t {
         double time;
@@ -257,7 +276,7 @@ namespace soslab {
         struct fill_c {
 
         };
-        fill_c fill;
+        fill_c _fill;
     } ivphelm_status_t;
 
 #define FLUSH_FILL(o) *((uint16_t*)&o._fill) = 0
@@ -279,6 +298,8 @@ namespace soslab {
 
         //!@note: microstrain imu
         imu_t ms_imu;
+
+        dvl_t dvl;
 
         mag_t mag;
 

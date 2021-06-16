@@ -409,6 +409,13 @@ void MOOSNode::Translate(CMOOSMsg &msg) {
 
 }
 
+bool MOOSNode::publishDvl() {
+    return
+        Notify("DVL_VEL_X", m_pool->dvl.x, m_pool->dvl.time) &&
+        Notify("DVL_VEL_Y", m_pool->dvl.z, m_pool->dvl.time) &&
+        Notify("DVL_VEL_Z", m_pool->dvl.y, m_pool->dvl.time);
+}
+
 bool MOOSNode::publishWayPointUpdate()
 {
     return toMOOS("WPT_UPDATE", m_pool->waypoint.update);

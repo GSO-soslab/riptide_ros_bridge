@@ -22,6 +22,9 @@ namespace soslab {
         m_pressure_publisher = m_pnh.advertise<riptide_ros_interface::Pressure>("ps",1000);
         m_mag_publisher = m_pnh.advertise<geometry_msgs::Vector3Stamped>("mag",1000);
 
+        // Subscribers
+        m_dvl_subscriber = m_pnh.subscribe("dvl",1000, &ROSNode::dvlCallback, this);
+
         // Services
         m_wpt_service = m_pnh.advertiseService("send_waypoint", &ROSNode::wayPointService, this);
         m_dep_service = m_pnh.advertiseService("send_depth", &ROSNode::depthService, this);
@@ -234,5 +237,13 @@ namespace soslab {
         m_pressure.pressure = m_pool->ps.pressure;
 
         m_pressure_publisher.publish(m_pressure);
+    }
+
+    void ROSNode::dvlCallback(const dvl_a50_ros::DVL::ConstPtr &msg) {
+        m_pool->dvl.time = msg->header.stamp.toSec();
+        m_pool->dvl.x = msg->velocity.x;
+        m_pool->dvl.y = msg->velocity.y;
+        m_pool->dvl.z = msg->velocity.z;
+        m_moosNode->publishDvl();
     }
 }

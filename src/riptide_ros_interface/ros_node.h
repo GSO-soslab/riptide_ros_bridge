@@ -19,6 +19,7 @@
 #include "riptide_ros_interface/IvpHelmState.h"
 #include "riptide_ros_interface/Gps.h"
 #include "riptide_ros_interface/Pressure.h"
+#include "dvl_a50_ros/DVL.h"
 
 // SRV
 #include "riptide_ros_interface/SetWayPoint.h"
@@ -62,6 +63,8 @@ namespace soslab {
 
         ros::Publisher m_mag_publisher;
 
+        ros::Subscriber m_dvl_subscriber;
+
         /** @brief: Receive and transmit way point to moos waypoint behavior */
         ros::ServiceServer m_wpt_service;
 
@@ -93,6 +96,8 @@ namespace soslab {
 
         bool manualOverideService(std_srvs::SetBool::Request& req,
                                   std_srvs::SetBool::Response& res);
+
+        void dvlCallback(const dvl_a50_ros::DVL::ConstPtr& msg);
 
     public:
 

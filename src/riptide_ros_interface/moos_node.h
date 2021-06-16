@@ -26,6 +26,8 @@ namespace soslab {
 
         bool publishDepthUpdate();
 
+        bool publishDvl();
+
         bool publishIvpHelmUpdate(const std::string& name, bool state);
 
         bool publishManualOveride(bool state);
