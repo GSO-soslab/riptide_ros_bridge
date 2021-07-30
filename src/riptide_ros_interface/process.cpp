@@ -23,7 +23,7 @@ namespace soslab {
                     break;
             }
         }
-        ros::init(argc, argv, "moos_ros_bridge");
+        ros::init(argc, argv, "irosbridge");
 
         m_rosNode = std::make_shared<ROSNode>();
         m_moosNode = std::make_shared<MOOSNode>();

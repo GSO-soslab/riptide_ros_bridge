@@ -16,7 +16,6 @@ namespace soslab {
         Process();
         void Run(int argc, char* argv[]);
     };
-
 }
 
 

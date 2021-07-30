@@ -7,5 +7,4 @@
             args="-m $(find riptide_ros_interface)/config/ppp-bridge.moos"
             output="screen"
     />
-
 </launch>

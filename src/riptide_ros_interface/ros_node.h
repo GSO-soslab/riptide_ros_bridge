@@ -12,7 +12,7 @@
 #include "geometry_msgs/Point.h"
 #include "sensor_msgs/Imu.h"
 #include "geometry_msgs/Vector3Stamped.h"
-
+#include "sensor_msgs/MagneticField.h"
 
 // MSG
 #include "riptide_ros_interface/Nav.h"
@@ -38,7 +38,7 @@ namespace soslab {
         sensor_msgs::Imu m_imu_msg;
         sensor_msgs::Imu m_ms_imu_msg;
 
-        geometry_msgs::Vector3Stamped m_mag;
+        sensor_msgs::MagneticField m_mag;
 
         riptide_ros_interface::Pressure m_pressure;
 

@@ -22,8 +22,8 @@ Processconfig = ANTLER
 
 ProcessConfig = iRosBridge
 {
-  AppTick    = 1
-  CommsTick  = 20
+  AppTick    = 500
+  CommsTick  = 500
 }
 
 ProcessConfig = uMS

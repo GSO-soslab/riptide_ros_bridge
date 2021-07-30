@@ -93,8 +93,8 @@ bool MOOSNode::Iterate()
 */
 bool MOOSNode::OnStartUp()
 {
-    appTick = 1;
-    commsTick = 100;
+    appTick = 1000;
+    commsTick = 1000;
 
     if(!m_MissionReader.GetConfigurationParam("AppTick",appTick))
     {
